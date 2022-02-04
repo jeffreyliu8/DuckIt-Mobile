@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class DuckPost (
     val id: String,
     val headline: String,
-    val image: Int,
+    val image: String,
     @SerialName("upvotes")
     val upVotes: Int,
     val author: String,

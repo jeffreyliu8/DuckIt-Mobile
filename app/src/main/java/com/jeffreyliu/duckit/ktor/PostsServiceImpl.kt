@@ -2,6 +2,7 @@ package com.jeffreyliu.duckit.ktor
 
 import com.jeffreyliu.duckit.model.DuckPostRequest
 import com.jeffreyliu.duckit.model.DuckPosts
+import com.orhanobut.logger.Logger
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -16,18 +17,18 @@ class PostsServiceImpl(
             client.get { url(HttpRoutes.GET_POSTS) }
         } catch (e: RedirectResponseException) {
             // 3xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: ClientRequestException) {
             // 4xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: ServerResponseException) {
             // 5xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             null
         }
     }
@@ -41,18 +42,18 @@ class PostsServiceImpl(
             }
         } catch (e: RedirectResponseException) {
             // 3xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: ClientRequestException) {
             // 4xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: ServerResponseException) {
             // 5xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             null
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             null
         }
     }
