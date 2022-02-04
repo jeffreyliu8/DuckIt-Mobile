@@ -1,6 +1,7 @@
 package com.jeffreyliu.duckit.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -8,34 +9,38 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jeffreyliu.duckit.databinding.ListItemBinding
 import com.jeffreyliu.duckit.model.DuckPost
+import com.jeffreyliu.duckit.model.DuckPostLoggedInWrapper
 
 
-class ItemAdapter(private val listener: ItemClickListener) :
+class ItemAdapter(private var listener: ItemClickListener?) :
     RecyclerView.Adapter<ItemAdapter.MyViewHolder>() {
 
     interface ItemClickListener {
-        fun onItemClick(device: DuckPost)
-        fun onItemLongClick(device: DuckPost)
+        fun onItemClick(post: DuckPost)
+        fun onItemLongClick(post: DuckPost)
+        fun onUpVote(post: DuckPost)
+        fun onDownVote(post: DuckPost)
     }
 
-    private var mDiffer: AsyncListDiffer<DuckPost>
-    private val diffCallback: DiffUtil.ItemCallback<DuckPost> =
-        object : DiffUtil.ItemCallback<DuckPost>() {
+    private var mDiffer: AsyncListDiffer<DuckPostLoggedInWrapper>
+    private val diffCallback: DiffUtil.ItemCallback<DuckPostLoggedInWrapper> =
+        object : DiffUtil.ItemCallback<DuckPostLoggedInWrapper>() {
             override fun areItemsTheSame(
-                oldItem: DuckPost,
-                newItem: DuckPost
+                oldItem: DuckPostLoggedInWrapper,
+                newItem: DuckPostLoggedInWrapper
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.post.id == newItem.post.id
             }
 
             override fun areContentsTheSame(
-                oldItem: DuckPost,
-                newItem: DuckPost
+                oldItem: DuckPostLoggedInWrapper,
+                newItem: DuckPostLoggedInWrapper
             ): Boolean {
-                return oldItem.author == newItem.author &&
-                        oldItem.headline == newItem.headline &&
-                        oldItem.image == newItem.image &&
-                        oldItem.upVotes == newItem.upVotes
+                return oldItem.post.author == newItem.post.author &&
+                        oldItem.post.headline == newItem.post.headline &&
+                        oldItem.post.image == newItem.post.image &&
+                        oldItem.post.upVotes == newItem.post.upVotes &&
+                        oldItem.loggedIn == newItem.loggedIn
             }
         } //define AsyncListDiffer
 
@@ -43,7 +48,11 @@ class ItemAdapter(private val listener: ItemClickListener) :
         mDiffer = AsyncListDiffer(this, diffCallback)
     }
 
-    fun updateList(list: List<DuckPost>) {
+    fun unregisterListener() {
+        listener = null
+    }
+
+    fun updateList(list: List<DuckPostLoggedInWrapper>) {
         mDiffer.submitList(list)
     }
 
@@ -62,17 +71,32 @@ class ItemAdapter(private val listener: ItemClickListener) :
 
     inner class MyViewHolder(private val binding: ListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: DuckPost, listener: ItemClickListener) = with(itemView) {
-            binding.titleTextView.text = item.headline
-            Glide.with(this).load(item.image).into(binding.imageView)
-            binding.votesTextView.text = item.upVotes.toString()
+        fun bind(item: DuckPostLoggedInWrapper, listener: ItemClickListener?) = with(itemView) {
+            binding.titleTextView.text = item.post.headline
+            Glide.with(this).load(item.post.image).into(binding.imageView)
+            binding.votesTextView.text = item.post.upVotes.toString()
+            if (item.loggedIn) {
+                binding.upvoteButton.visibility = View.VISIBLE
+                binding.downvoteButton.visibility = View.VISIBLE
+            } else {
+                binding.upvoteButton.visibility = View.INVISIBLE
+                binding.downvoteButton.visibility = View.INVISIBLE
+            }
+
+            binding.upvoteButton.setOnClickListener {
+                listener?.onUpVote(item.post)
+            }
+
+            binding.downvoteButton.setOnClickListener {
+                listener?.onDownVote(item.post)
+            }
 
             setOnClickListener {
-                listener.onItemClick(item)
+                listener?.onItemClick(item.post)
             }
 
             setOnLongClickListener {
-                listener.onItemLongClick(item)
+                listener?.onItemLongClick(item.post)
                 return@setOnLongClickListener true
             }
         }

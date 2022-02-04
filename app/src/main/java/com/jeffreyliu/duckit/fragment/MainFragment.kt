@@ -19,7 +19,7 @@ import com.jeffreyliu.duckit.viewmodel.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), ItemAdapter.ItemClickListener {
     private var navController: NavController? = null
 
     private var _binding: MainFragmentBinding? = null
@@ -30,15 +30,7 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
 
-    private val adapter = ItemAdapter(object : ItemAdapter.ItemClickListener {
-        override fun onItemClick(post: DuckPost) {
-
-        }
-
-        override fun onItemLongClick(post: DuckPost) {
-        }
-    })
-
+    private val adapter = ItemAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +43,7 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        adapter.unregisterListener()
         _binding = null
     }
 
@@ -86,7 +79,7 @@ class MainFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        if (viewModel.isUserLoggedIn()) {
+        if (viewModel.loggedInState.value) {
             inflater.inflate(R.menu.logged_in_menu, menu)
         } else {
             inflater.inflate(R.menu.login_menu, menu)
@@ -117,7 +110,7 @@ class MainFragment : Fragment() {
                 // Trigger the flow and start listening for values.
                 // Note that this happens when lifecycle is STARTED and stops
                 // collecting when the lifecycle is STOPPED
-                viewModel.uiState.collectLatest { uiState ->
+                viewModel.combinedFlow.collectLatest { uiState ->
                     // New value received
                     when (uiState) {
                         is Result.DoNothing -> {
@@ -142,5 +135,19 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onItemClick(post: DuckPost) {
+    }
+
+    override fun onItemLongClick(post: DuckPost) {
+    }
+
+    override fun onUpVote(post: DuckPost) {
+        viewModel.upVote(post)
+    }
+
+    override fun onDownVote(post: DuckPost) {
+        viewModel.downVote(post)
     }
 }
