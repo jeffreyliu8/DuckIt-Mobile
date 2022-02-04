@@ -9,10 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.jeffreyliu.duckit.R
 import com.jeffreyliu.duckit.adapter.ItemAdapter
+import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.databinding.MainFragmentBinding
 import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.viewmodel.MainViewModel
@@ -86,16 +86,27 @@ class MainFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.login_menu, menu)
+        if (viewModel.isUserLoggedIn()) {
+            inflater.inflate(R.menu.logged_in_menu, menu)
+        } else {
+            inflater.inflate(R.menu.login_menu, menu)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.login_menu_item) {
-            navigateToLoginFragment()
-            return true
+        when (item.itemId) {
+            R.id.login_menu_item -> {
+                navigateToLoginFragment()
+            }
+            R.id.logout_menu_item -> {
+                viewModel.logout()
+                activity?.invalidateOptionsMenu()
+            }
+            R.id.add_post_menu_item -> {
+                navigateToAddPostFragment()
+            }
         }
         return super.onOptionsItemSelected(item)
-
     }
 
     private fun setupViewModel() {
@@ -109,17 +120,17 @@ class MainFragment : Fragment() {
                 viewModel.uiState.collectLatest { uiState ->
                     // New value received
                     when (uiState) {
-                        is MainViewModel.SetUiState.DoNothing -> {
+                        is Result.DoNothing -> {
                             binding.swipeContainer.isRefreshing = false
                         }
-                        is MainViewModel.SetUiState.Loading -> {
+                        is Result.Loading -> {
                             binding.swipeContainer.isRefreshing = true
                         }
-                        is MainViewModel.SetUiState.Success -> {
+                        is Result.Success -> {
                             binding.swipeContainer.isRefreshing = false
-                            adapter.updateList(uiState.posts)
+                            adapter.updateList(uiState.data)
                         }
-                        is MainViewModel.SetUiState.Error -> {
+                        is Result.Error -> {
                             binding.swipeContainer.isRefreshing = false
                             Snackbar.make(
                                 binding.swipeContainer,
