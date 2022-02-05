@@ -1,5 +1,6 @@
 package com.jeffreyliu.duckit.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,10 @@ import com.jeffreyliu.duckit.model.DuckPostLoggedInWrapper
 
 class ItemAdapter(private var listener: ItemClickListener?) :
     RecyclerView.Adapter<ItemAdapter.MyViewHolder>() {
+
+    private companion object {
+        private const val DIFF_DELTA_KEY_VOTES = "votes"
+    }
 
     interface ItemClickListener {
         fun onItemClick(post: DuckPost)
@@ -42,6 +47,19 @@ class ItemAdapter(private var listener: ItemClickListener?) :
                         oldItem.post.upVotes == newItem.post.upVotes &&
                         oldItem.loggedIn == newItem.loggedIn
             }
+
+            override fun getChangePayload(
+                oldItem: DuckPostLoggedInWrapper,
+                newItem: DuckPostLoggedInWrapper
+            ): Any? {
+                val diff = Bundle()
+                if (oldItem.post.upVotes != newItem.post.upVotes) {
+                    diff.putInt(DIFF_DELTA_KEY_VOTES, newItem.post.upVotes)
+                }
+                return if (diff.size() == 0) {
+                    null
+                } else diff
+            }
         } //define AsyncListDiffer
 
     init {
@@ -68,6 +86,20 @@ class ItemAdapter(private var listener: ItemClickListener?) :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) =
         holder.bind(mDiffer.currentList[position], listener)
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+            return
+        }
+        val o = payloads[0] as Bundle
+        for (key in o.keySet()) {
+            if (key == DIFF_DELTA_KEY_VOTES) {
+                holder.bindVote(o.getInt(key))
+                break
+            }
+        }
+    }
 
     inner class MyViewHolder(private val binding: ListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -99,6 +131,10 @@ class ItemAdapter(private var listener: ItemClickListener?) :
                 listener?.onItemLongClick(item.post)
                 return@setOnLongClickListener true
             }
+        }
+
+        fun bindVote(vote: Int) {
+            binding.votesTextView.text = vote.toString()
         }
     }
 }
