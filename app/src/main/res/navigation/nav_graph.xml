@@ -27,7 +27,8 @@
     <fragment
         android:id="@+id/addPostFragment"
         android:name="com.jeffreyliu.duckit.fragment.AddPostFragment"
-        android:label="AddPostFragment">
+        android:label="AddPostFragment"
+        tools:layout="@layout/add_post_fragment">
         <action
             android:id="@+id/action_addPostFragment_to_mainFragment"
             app:destination="@id/mainFragment"
@@ -38,7 +39,8 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.jeffreyliu.duckit.fragment.LoginFragment"
-        android:label="LoginFragment">
+        android:label="LoginFragment"
+        tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment"
