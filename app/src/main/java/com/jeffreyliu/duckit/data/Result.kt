@@ -12,13 +12,12 @@ sealed class Result<out T : Any> {
         val exception: Exception,
         val errorMsg: String,
         val errorCode: Int?,
-        val timestamp: Long
     ) : Result<Nothing>()
 
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$exception][errorMsg=$errorMsg][errCode=$errorCode][time=$timestamp]"
+            is Error -> "Error[exception=$exception][errorMsg=$errorMsg][errCode=$errorCode]"
             is DoNothing -> "DoNothing"
             is Loading -> "Loading"
         }

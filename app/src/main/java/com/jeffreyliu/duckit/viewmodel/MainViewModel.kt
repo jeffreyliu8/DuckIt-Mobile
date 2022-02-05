@@ -1,6 +1,7 @@
 package com.jeffreyliu.duckit.viewmodel
 
 import androidx.lifecycle.*
+import com.jeffreyliu.duckit.constant.ERROR_MSG_CONNECTION
 import com.jeffreyliu.duckit.data.LoginDataSource
 import com.jeffreyliu.duckit.data.LoginRepository
 import com.jeffreyliu.duckit.data.Result
@@ -9,7 +10,7 @@ import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.model.DuckPostLoggedInWrapper
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.io.IOException
+import java.net.UnknownHostException
 
 class MainViewModel : ViewModel() {
 
@@ -39,7 +40,6 @@ class MainViewModel : ViewModel() {
                         exception = r.exception,
                         errorMsg = r.errorMsg,
                         errorCode = r.errorCode,
-                        timestamp = r.timestamp,
                     )
                 }
             }
@@ -49,33 +49,43 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = Result.Loading
             val posts = service.getPosts()
-            posts?.let {
-                _uiState.value = Result.Success(it.posts)
-            } ?: kotlin.run {
+            if (posts.response != null) {
+                _uiState.value = Result.Success(posts.response.posts)
+            } else if (posts.e != null) {
+                val msg = if (posts.e is UnknownHostException) {
+                    ERROR_MSG_CONNECTION
+                } else {
+                    posts.e.localizedMessage
+                }
                 _uiState.value = Result.Error(
-                    exception = IOException("Error loading posts"),
-                    errorMsg = "Please check internet",
+                    exception = posts.e,
+                    errorMsg = msg,
                     errorCode = null,
-                    System.currentTimeMillis()
                 )
             }
         }
     }
 
     fun logout() {
-        _loggedInState.value = false
         loginRepository.logout()
+        _loggedInState.value = false
     }
 
     fun upVote(id: String) {
         viewModelScope.launch {
             val result = service.upvote(id)
-            if (result != null) {
+            if (result.response?.upVotes != null) {
                 _uiState.value.let { r ->
                     if (r is Result.Success) {
                         val old = r.data.firstOrNull { it.id == id } ?: return@launch
                         val updated =
-                            DuckPost(id, old.headline, old.image, result.upVotes, old.author)
+                            DuckPost(
+                                id,
+                                old.headline,
+                                old.image,
+                                result.response.upVotes,
+                                old.author
+                            )
                         val oldIndex = r.data.indexOfFirst { it.id == id }
                         val list = mutableListOf<DuckPost>()
                         list.addAll(r.data)
@@ -83,6 +93,14 @@ class MainViewModel : ViewModel() {
                         _uiState.value = Result.Success(list)
                     }
                 }
+            } else if (result.e != null) {
+                val msg = if (result.e is UnknownHostException) {
+                    ERROR_MSG_CONNECTION
+                } else {
+                    result.e.localizedMessage
+                }
+                _uiState.value =
+                    Result.Error(exception = result.e, errorMsg = msg, errorCode = null)
             }
         }
     }
@@ -90,12 +108,18 @@ class MainViewModel : ViewModel() {
     fun downVote(id: String) {
         viewModelScope.launch {
             val result = service.downVote(id)
-            if (result != null) {
+            if (result.response?.upVotes != null) {
                 _uiState.value.let { r ->
                     if (r is Result.Success) {
                         val old = r.data.firstOrNull { it.id == id } ?: return@launch
                         val updated =
-                            DuckPost(id, old.headline, old.image, result.upVotes, old.author)
+                            DuckPost(
+                                id,
+                                old.headline,
+                                old.image,
+                                result.response.upVotes,
+                                old.author
+                            )
                         val oldIndex = r.data.indexOfFirst { it.id == id }
                         val list = mutableListOf<DuckPost>()
                         list.addAll(r.data)
@@ -103,6 +127,14 @@ class MainViewModel : ViewModel() {
                         _uiState.value = Result.Success(list)
                     }
                 }
+            } else if (result.e != null) {
+                val msg = if (result.e is UnknownHostException) {
+                    ERROR_MSG_CONNECTION
+                } else {
+                    result.e.localizedMessage
+                }
+                _uiState.value =
+                    Result.Error(exception = result.e, errorMsg = msg, errorCode = null)
             }
         }
     }

@@ -14,6 +14,7 @@ import com.jeffreyliu.duckit.R
 import com.jeffreyliu.duckit.adapter.ItemAdapter
 import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.databinding.MainFragmentBinding
+import com.jeffreyliu.duckit.extension.exhaustive
 import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.viewmodel.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -130,7 +131,7 @@ class MainFragment : Fragment(), ItemAdapter.ItemClickListener {
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
-                    }
+                    }.exhaustive
                 }
             }
         }

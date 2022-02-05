@@ -1,11 +1,13 @@
 package com.jeffreyliu.duckit.data
 
+import com.jeffreyliu.duckit.constant.ERROR_MSG_CONNECTION
 import com.jeffreyliu.duckit.ktor.PostsService
 import com.jeffreyliu.duckit.model.LoggedInUser
 import com.jeffreyliu.duckit.model.SignInUpRequestBody
 import com.pixplicity.easyprefs.library.Prefs
 import io.ktor.client.features.*
 import java.io.IOException
+import java.net.UnknownHostException
 
 
 /**
@@ -24,9 +26,11 @@ class LoginDataSource {
         } else {
             service.signIn(SignInUpRequestBody(email = email, password = password))
         }
-        val response = result.first
-        val e = result.second
-        if (e != null) {
+        val response = result.response
+        val e = result.e
+        if (response != null) {
+            return Result.Success(LoggedInUser(response.token))
+        } else if (e != null) {
             var code = -1
             val errorMsg = when (e) {
                 is RedirectResponseException -> {
@@ -44,6 +48,9 @@ class LoginDataSource {
                     code = e.response.status.value
                     e.response.status.description
                 }
+                is UnknownHostException -> {
+                    ERROR_MSG_CONNECTION
+                }
                 else -> {
                     e.localizedMessage
                 }
@@ -52,17 +59,13 @@ class LoginDataSource {
                 exception = e,
                 errorMsg = errorMsg,
                 errorCode = code,
-                timestamp = System.currentTimeMillis()
             )
-        } else if (response != null) {
-            return Result.Success(LoggedInUser(response.token))
         }
         val errMsg = "Error logging in or sign up"
         return Result.Error(
             IOException(errMsg, e),
             errMsg,
             null,
-            System.currentTimeMillis()
         )
     }
 

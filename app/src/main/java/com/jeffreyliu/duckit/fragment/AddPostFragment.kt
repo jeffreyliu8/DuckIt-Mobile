@@ -1,10 +1,12 @@
 package com.jeffreyliu.duckit.fragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jeffreyliu.duckit.R
 import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.databinding.AddPostFragmentBinding
+import com.jeffreyliu.duckit.extension.exhaustive
 import com.jeffreyliu.duckit.viewmodel.AddPostViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,6 +55,7 @@ class AddPostFragment : Fragment() {
         setupViewModel()
 
         binding.button.setOnClickListener {
+            hideKeyboard()
             val headline = binding.headLineEditText.text.toString()
             val url = binding.urlEditText.text.toString()
             if (headline.isBlank() || url.isBlank()) {
@@ -96,7 +100,7 @@ class AddPostFragment : Fragment() {
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
-                    }
+                    }.exhaustive
                 }
             }
         }
@@ -107,5 +111,11 @@ class AddPostFragment : Fragment() {
             val action = AddPostFragmentDirections.actionAddPostFragmentToMainFragment()
             navController?.navigate(action)
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }
