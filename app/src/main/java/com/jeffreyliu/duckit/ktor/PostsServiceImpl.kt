@@ -1,6 +1,8 @@
 package com.jeffreyliu.duckit.ktor
 
+import com.jeffreyliu.duckit.constant.PREF_KEY_TOKEN
 import com.jeffreyliu.duckit.model.*
+import com.pixplicity.easyprefs.library.Prefs
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -31,28 +33,30 @@ class PostsServiceImpl(
         }
     }
 
-    override suspend fun createPost(postRequest: DuckPostRequest): String? {
+    override suspend fun createPost(postRequest: DuckPostRequest): Boolean {
         return try {
-            client.post {
+            client.post<String?> {
                 url(HttpRoutes.NEW_POST)
                 contentType(ContentType.Application.Json)
                 body = postRequest
+                header("Authorization", "Bearer ${Prefs.getString(PREF_KEY_TOKEN)}")
             }
+            true
         } catch (e: RedirectResponseException) {
             // 3xx - responses
             println("Error: ${e.response.status.description}")
-            null
+            false
         } catch (e: ClientRequestException) {
             // 4xx - responses
             println("Error: ${e.response.status.description}")
-            null
+            false
         } catch (e: ServerResponseException) {
             // 5xx - responses
             println("Error: ${e.response.status.description}")
-            null
+            false
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            null
+            false
         }
     }
 
