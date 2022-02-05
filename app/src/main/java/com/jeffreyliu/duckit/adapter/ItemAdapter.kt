@@ -18,6 +18,7 @@ class ItemAdapter(private var listener: ItemClickListener?) :
 
     private companion object {
         private const val DIFF_DELTA_KEY_VOTES = "votes"
+        private const val DIFF_DELTA_KEY_LOGGED_IN_OUT = "login"
     }
 
     interface ItemClickListener {
@@ -55,6 +56,9 @@ class ItemAdapter(private var listener: ItemClickListener?) :
                 val diff = Bundle()
                 if (oldItem.post.upVotes != newItem.post.upVotes) {
                     diff.putInt(DIFF_DELTA_KEY_VOTES, newItem.post.upVotes)
+                }
+                if (oldItem.loggedIn != newItem.loggedIn) {
+                    diff.putBoolean(DIFF_DELTA_KEY_LOGGED_IN_OUT, newItem.loggedIn)
                 }
                 return if (diff.size() == 0) {
                     null
@@ -98,6 +102,10 @@ class ItemAdapter(private var listener: ItemClickListener?) :
                 holder.bindVote(o.getInt(key))
                 break
             }
+            if (key == DIFF_DELTA_KEY_LOGGED_IN_OUT) {
+                holder.bindLoggedInStatus(o.getBoolean(key))
+                break
+            }
         }
     }
 
@@ -106,14 +114,8 @@ class ItemAdapter(private var listener: ItemClickListener?) :
         fun bind(item: DuckPostLoggedInWrapper, listener: ItemClickListener?) = with(itemView) {
             binding.titleTextView.text = item.post.headline
             Glide.with(this).load(item.post.image).into(binding.imageView)
-            binding.votesTextView.text = item.post.upVotes.toString()
-            if (item.loggedIn) {
-                binding.upvoteButton.visibility = View.VISIBLE
-                binding.downvoteButton.visibility = View.VISIBLE
-            } else {
-                binding.upvoteButton.visibility = View.INVISIBLE
-                binding.downvoteButton.visibility = View.INVISIBLE
-            }
+            bindVote(item.post.upVotes)
+            bindLoggedInStatus(item.loggedIn)
 
             binding.upvoteButton.setOnClickListener {
                 listener?.onUpVote(item.post.id)
@@ -135,6 +137,16 @@ class ItemAdapter(private var listener: ItemClickListener?) :
 
         fun bindVote(vote: Int) {
             binding.votesTextView.text = vote.toString()
+        }
+
+        fun bindLoggedInStatus(isLoggedIn: Boolean) {
+            if (isLoggedIn) {
+                binding.upvoteButton.visibility = View.VISIBLE
+                binding.downvoteButton.visibility = View.VISIBLE
+            } else {
+                binding.upvoteButton.visibility = View.INVISIBLE
+                binding.downvoteButton.visibility = View.INVISIBLE
+            }
         }
     }
 }
