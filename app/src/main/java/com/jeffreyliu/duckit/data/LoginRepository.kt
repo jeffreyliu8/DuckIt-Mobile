@@ -21,7 +21,10 @@ class LoginRepository(private val dataSource: LoginDataSource) {
     init {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
-        user = LoggedInUser(Prefs.getString(PREF_KEY_TOKEN))
+        val token = Prefs.getString(PREF_KEY_TOKEN)
+        if (token.isNotBlank()) {
+            user = LoggedInUser(Prefs.getString(PREF_KEY_TOKEN))
+        }
     }
 
     fun logout() {
