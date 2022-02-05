@@ -13,7 +13,7 @@ import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.model.DuckPostLoggedInWrapper
 
 
-class ItemAdapter(private var listener: ItemClickListener?) :
+class ItemAdapter(private var listener: ItemClickListener) :
     RecyclerView.Adapter<ItemAdapter.MyViewHolder>() {
 
     private companion object {
@@ -68,10 +68,6 @@ class ItemAdapter(private var listener: ItemClickListener?) :
 
     init {
         mDiffer = AsyncListDiffer(this, diffCallback)
-    }
-
-    fun unregisterListener() {
-        listener = null
     }
 
     fun updateList(list: List<DuckPostLoggedInWrapper>) {

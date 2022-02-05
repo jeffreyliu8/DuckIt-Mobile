@@ -42,9 +42,8 @@ class MainFragment : Fragment(), ItemAdapter.ItemClickListener {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        adapter.unregisterListener()
         _binding = null
+        super.onDestroyView()
     }
 
 
