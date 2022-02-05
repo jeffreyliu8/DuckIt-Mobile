@@ -1,9 +1,6 @@
 package com.jeffreyliu.duckit.ktor
 
-import com.jeffreyliu.duckit.model.DuckPostRequest
-import com.jeffreyliu.duckit.model.DuckPosts
-import com.jeffreyliu.duckit.model.SignInUpRequestBody
-import com.jeffreyliu.duckit.model.SignInUpResponse
+import com.jeffreyliu.duckit.model.*
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.json.*
@@ -16,6 +13,8 @@ interface PostsService {
     suspend fun createPost(postRequest: DuckPostRequest): String?
     suspend fun signIn(request: SignInUpRequestBody): Pair<SignInUpResponse?, Exception?>
     suspend fun signUp(request: SignInUpRequestBody): Pair<SignInUpResponse?, Exception?>
+    suspend fun upvote(id: String): UpDownVoteResponse?
+    suspend fun downVote(id: String): UpDownVoteResponse?
 
     companion object {
         fun create(): PostsService {

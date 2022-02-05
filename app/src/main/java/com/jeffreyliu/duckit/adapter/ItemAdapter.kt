@@ -18,8 +18,8 @@ class ItemAdapter(private var listener: ItemClickListener?) :
     interface ItemClickListener {
         fun onItemClick(post: DuckPost)
         fun onItemLongClick(post: DuckPost)
-        fun onUpVote(post: DuckPost)
-        fun onDownVote(post: DuckPost)
+        fun onUpVote(id: String)
+        fun onDownVote(id: String)
     }
 
     private var mDiffer: AsyncListDiffer<DuckPostLoggedInWrapper>
@@ -84,11 +84,11 @@ class ItemAdapter(private var listener: ItemClickListener?) :
             }
 
             binding.upvoteButton.setOnClickListener {
-                listener?.onUpVote(item.post)
+                listener?.onUpVote(item.post.id)
             }
 
             binding.downvoteButton.setOnClickListener {
-                listener?.onDownVote(item.post)
+                listener?.onDownVote(item.post.id)
             }
 
             setOnClickListener {

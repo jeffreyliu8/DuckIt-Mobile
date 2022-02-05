@@ -1,17 +1,13 @@
 package com.jeffreyliu.duckit.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.jeffreyliu.duckit.data.LoginDataSource
 import com.jeffreyliu.duckit.data.LoginRepository
 import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.ktor.PostsService
 import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.model.DuckPostLoggedInWrapper
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -49,7 +45,6 @@ class MainViewModel : ViewModel() {
             }
         }
 
-
     fun getPosts() {
         viewModelScope.launch {
             _uiState.value = Result.Loading
@@ -72,11 +67,43 @@ class MainViewModel : ViewModel() {
         loginRepository.logout()
     }
 
-    fun upVote(post: DuckPost) {
-
+    fun upVote(id: String) {
+        viewModelScope.launch {
+            val result = service.upvote(id)
+            if (result != null) {
+                _uiState.value.let { r ->
+                    if (r is Result.Success) {
+                        val old = r.data.firstOrNull { it.id == id } ?: return@launch
+                        val updated =
+                            DuckPost(id, old.headline, old.image, result.upVotes, old.author)
+                        val oldIndex = r.data.indexOfFirst { it.id == id }
+                        val list = mutableListOf<DuckPost>()
+                        list.addAll(r.data)
+                        list[oldIndex] = updated
+                        _uiState.value = Result.Success(list)
+                    }
+                }
+            }
+        }
     }
 
-    fun downVote(post: DuckPost) {
-
+    fun downVote(id: String) {
+        viewModelScope.launch {
+            val result = service.downVote(id)
+            if (result != null) {
+                _uiState.value.let { r ->
+                    if (r is Result.Success) {
+                        val old = r.data.firstOrNull { it.id == id } ?: return@launch
+                        val updated =
+                            DuckPost(id, old.headline, old.image, result.upVotes, old.author)
+                        val oldIndex = r.data.indexOfFirst { it.id == id }
+                        val list = mutableListOf<DuckPost>()
+                        list.addAll(r.data)
+                        list[oldIndex] = updated
+                        _uiState.value = Result.Success(list)
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,9 +1,6 @@
 package com.jeffreyliu.duckit.ktor
 
-import com.jeffreyliu.duckit.model.DuckPostRequest
-import com.jeffreyliu.duckit.model.DuckPosts
-import com.jeffreyliu.duckit.model.SignInUpRequestBody
-import com.jeffreyliu.duckit.model.SignInUpResponse
+import com.jeffreyliu.duckit.model.*
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -84,6 +81,30 @@ class PostsServiceImpl(
         } catch (e: Exception) {
             println("Error: ${e.message}")
             Pair(null, e)
+        }
+    }
+
+    override suspend fun upvote(id: String): UpDownVoteResponse? {
+        return try {
+            client.post<UpDownVoteResponse> {
+                url("${HttpRoutes.UPVOTE_PREFIX}$id${HttpRoutes.UPVOTE_POSTFIX}")
+                contentType(ContentType.Application.Json)
+            }
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            null
+        }
+    }
+
+    override suspend fun downVote(id: String): UpDownVoteResponse? {
+        return try {
+            client.post<UpDownVoteResponse> {
+                url("${HttpRoutes.DOWNVOTE_PREFIX}$id${HttpRoutes.DOWNVOTE_POSTFIX}")
+                contentType(ContentType.Application.Json)
+            }
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            null
         }
     }
 }

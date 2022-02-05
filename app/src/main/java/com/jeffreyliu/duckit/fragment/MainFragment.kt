@@ -143,11 +143,11 @@ class MainFragment : Fragment(), ItemAdapter.ItemClickListener {
     override fun onItemLongClick(post: DuckPost) {
     }
 
-    override fun onUpVote(post: DuckPost) {
-        viewModel.upVote(post)
+    override fun onUpVote(id: String) {
+        viewModel.upVote(id)
     }
 
-    override fun onDownVote(post: DuckPost) {
-        viewModel.downVote(post)
+    override fun onDownVote(id: String) {
+        viewModel.downVote(id)
     }
 }
