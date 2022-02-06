@@ -13,8 +13,7 @@ import java.net.UnknownHostException
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-class LoginDataSource {
-    private val service = PostsService.create()
+class LoginDataSource(private val service: PostsService) {
 
     suspend fun loginOrSignUp(
         email: String,

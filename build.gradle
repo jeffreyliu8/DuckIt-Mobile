@@ -1,8 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.hilt_version = '2.40.5'
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:1.6.10"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.0-alpha01"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
 }
 

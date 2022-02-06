@@ -6,16 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeffreyliu.duckit.R
-import com.jeffreyliu.duckit.data.LoginDataSource
 import com.jeffreyliu.duckit.data.LoginRepository
 import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.model.LoginFormState
 import com.jeffreyliu.duckit.model.LoginResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
-    private val dataSource = LoginDataSource()
-    private val loginRepository = LoginRepository(dataSource)
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val loginRepository: LoginRepository
+) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm

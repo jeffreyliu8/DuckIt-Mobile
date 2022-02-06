@@ -17,9 +17,11 @@ import com.jeffreyliu.duckit.databinding.MainFragmentBinding
 import com.jeffreyliu.duckit.extension.exhaustive
 import com.jeffreyliu.duckit.model.DuckPost
 import com.jeffreyliu.duckit.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainFragment : Fragment(), ItemAdapter.ItemClickListener {
     private var navController: NavController? = null
 

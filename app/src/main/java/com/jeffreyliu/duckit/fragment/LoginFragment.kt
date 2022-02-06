@@ -19,8 +19,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.jeffreyliu.duckit.R
 import com.jeffreyliu.duckit.databinding.LoginFragmentBinding
 import com.jeffreyliu.duckit.viewmodel.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
     private var navController: NavController? = null
 

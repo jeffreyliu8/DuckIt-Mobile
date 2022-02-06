@@ -4,6 +4,7 @@ plugins {
     id 'kotlinx-serialization'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -74,4 +75,6 @@ dependencies {
     implementation 'com.pixplicity.easyprefs:EasyPrefs:1.10.0'
 
     implementation 'com.github.jeffreyliu8.encryptlib:release:0.0.6'
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 }

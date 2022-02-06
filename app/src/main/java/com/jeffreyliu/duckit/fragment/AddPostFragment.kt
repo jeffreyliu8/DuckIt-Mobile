@@ -19,9 +19,11 @@ import com.jeffreyliu.duckit.data.Result
 import com.jeffreyliu.duckit.databinding.AddPostFragmentBinding
 import com.jeffreyliu.duckit.extension.exhaustive
 import com.jeffreyliu.duckit.viewmodel.AddPostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class AddPostFragment : Fragment() {
     private var navController: NavController? = null
 
