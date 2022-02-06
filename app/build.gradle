@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.jeffreyliu.duckit"
-        minSdk 21
+        minSdk 23
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -72,6 +72,7 @@ dependencies {
 
 //    implementation 'com.orhanobut:logger:2.2.0'
 
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     implementation 'com.pixplicity.easyprefs:EasyPrefs:1.10.0'
+
+    implementation 'com.github.jeffreyliu8.encryptlib:release:0.0.4'
 }

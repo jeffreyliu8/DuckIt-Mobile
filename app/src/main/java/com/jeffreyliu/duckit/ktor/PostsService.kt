@@ -10,7 +10,7 @@ import io.ktor.client.features.logging.*
 interface PostsService {
 
     suspend fun getPosts(): ResponseWrapper<DuckPosts>
-    suspend fun createPost(postRequest: DuckPostRequest): ResponseWrapper<Nothing>
+    suspend fun createPost(postRequest: DuckPostRequest, token: String): ResponseWrapper<Nothing>
     suspend fun signIn(request: SignInUpRequestBody): ResponseWrapper<SignInUpResponse>
     suspend fun signUp(request: SignInUpRequestBody): ResponseWrapper<SignInUpResponse>
     suspend fun upvote(id: String): ResponseWrapper<UpDownVoteResponse>

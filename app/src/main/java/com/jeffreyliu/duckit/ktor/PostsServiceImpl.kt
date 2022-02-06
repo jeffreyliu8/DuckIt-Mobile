@@ -34,13 +34,16 @@ class PostsServiceImpl(
         }
     }
 
-    override suspend fun createPost(postRequest: DuckPostRequest): ResponseWrapper<Nothing> {
+    override suspend fun createPost(
+        postRequest: DuckPostRequest,
+        token: String
+    ): ResponseWrapper<Nothing> {
         return try {
             client.post<String?> {
                 url(HttpRoutes.NEW_POST)
                 contentType(ContentType.Application.Json)
                 body = postRequest
-                header("Authorization", "Bearer ${Prefs.getString(PREF_KEY_TOKEN)}")
+                header("Authorization", "Bearer $token")
             }
             ResponseWrapper()
         } catch (e: RedirectResponseException) {
