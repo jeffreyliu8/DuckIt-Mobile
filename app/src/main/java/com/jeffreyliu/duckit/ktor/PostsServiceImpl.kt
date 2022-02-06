@@ -1,8 +1,6 @@
 package com.jeffreyliu.duckit.ktor
 
-import com.jeffreyliu.duckit.constant.PREF_KEY_TOKEN
 import com.jeffreyliu.duckit.model.*
-import com.pixplicity.easyprefs.library.Prefs
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*

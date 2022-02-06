@@ -1,6 +1,5 @@
 package com.jeffreyliu.duckit.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeffreyliu.duckit.constant.ERROR_MSG_CONNECTION

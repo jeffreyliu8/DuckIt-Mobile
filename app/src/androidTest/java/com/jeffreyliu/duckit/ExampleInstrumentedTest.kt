@@ -1,6 +1,5 @@
 package com.jeffreyliu.duckit
 
-import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jeffreyliu.duckit.ktor.PostsService
@@ -30,12 +29,8 @@ class ExampleInstrumentedTest {
     fun testApiCall() {
         val service = PostsService.create()
         runBlocking {
-
             val posts = service.getPosts()
-            posts?.let {
-                Log.d("jeff", "post size is ${it.posts.size}")
-                assertNotEquals(it.posts.size, 0)
-            }
+            assertNotEquals(posts.response?.posts?.size, 0)
         }
     }
 }
