@@ -34,6 +34,7 @@
             android:id="@+id/imageView"
             android:layout_width="128dp"
             android:layout_height="128dp"
+            android:contentDescription="@null"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleTextView"
             tools:src="@tools:sample/avatars" />
@@ -43,6 +44,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/up_vote"
             android:src="@drawable/ic_baseline_arrow_upward_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -64,6 +66,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/down_vote"
             android:src="@drawable/ic_baseline_arrow_downward_24"
             app:layout_constraintStart_toEndOf="@+id/votesTextView"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />

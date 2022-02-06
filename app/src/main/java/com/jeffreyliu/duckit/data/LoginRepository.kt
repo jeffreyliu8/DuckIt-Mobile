@@ -1,6 +1,8 @@
 package com.jeffreyliu.duckit.data
 
+import android.os.Build
 import android.util.Base64
+import androidx.annotation.RequiresApi
 import com.jeffreyliu.duckit.constant.PREF_KEY_TOKEN
 import com.jeffreyliu.duckit.constant.PREF_KEY_TOKEN_IV
 import com.jeffreyliu.duckit.model.LoggedInUser
@@ -28,21 +30,8 @@ class LoginRepository(private val dataSource: LoginDataSource) {
     init {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
-        val tokenPref = Prefs.getString(PREF_KEY_TOKEN)
-        val ivPref = Prefs.getString(PREF_KEY_TOKEN_IV)
-
-        if (ivPref.isNotBlank()) {
-            val encryptedByteArray = Base64.decode(tokenPref, Base64.DEFAULT)
-            val iv = Base64.decode(ivPref, Base64.DEFAULT)
-
-            val se2 = AndroidKeyStoreSymmetricEncryptor()
-            val decryptedByteArray =
-                se2.decrypt(keyStoreAlias, encryptedByteArray!!, iv)
-
-            val decryptedString = decryptedByteArray?.decodeToString()
-            decryptedString?.let {
-                user = LoggedInUser(it)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            decryptToken()
         } else {
             val token = Prefs.getString(PREF_KEY_TOKEN)
             if (token.isNotBlank()) {
@@ -72,19 +61,53 @@ class LoginRepository(private val dataSource: LoginDataSource) {
         this.user = loggedInUser
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
-        val pin = loggedInUser.token
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            encryptToken(loggedInUser.token)
+        } else {
+            Prefs.putString(PREF_KEY_TOKEN, loggedInUser.token)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun encryptToken(token: String) {
         val se = AndroidKeyStoreSymmetricEncryptor()
         val isKeyGenerated = se.generateKey(keyStoreAlias)
 
         if (isKeyGenerated) {
-            val encryptedByteArray = se.encrypt(keyStoreAlias, pin.toByteArray())
+            val encryptedByteArray = se.encrypt(keyStoreAlias, token.toByteArray())
             val encryptedString = Base64.encodeToString(encryptedByteArray, Base64.DEFAULT)
             val iv = se.getIV()
             val ivString = Base64.encodeToString(iv, Base64.DEFAULT)
             Prefs.putString(PREF_KEY_TOKEN, encryptedString)
             Prefs.putString(PREF_KEY_TOKEN_IV, ivString)
         } else {
-            Prefs.putString(PREF_KEY_TOKEN, loggedInUser.token)
+            Prefs.putString(PREF_KEY_TOKEN, token)
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun decryptToken() {
+        val tokenPref = Prefs.getString(PREF_KEY_TOKEN)
+        val ivPref = Prefs.getString(PREF_KEY_TOKEN_IV)
+
+        if (ivPref.isNotBlank()) {
+            val encryptedByteArray = Base64.decode(tokenPref, Base64.DEFAULT)
+            val iv = Base64.decode(ivPref, Base64.DEFAULT)
+
+            val se2 = AndroidKeyStoreSymmetricEncryptor()
+            val decryptedByteArray =
+                se2.decrypt(keyStoreAlias, encryptedByteArray!!, iv)
+
+            val decryptedString = decryptedByteArray?.decodeToString()
+            decryptedString?.let {
+                user = LoggedInUser(it)
+            }
+        } else {
+            val token = Prefs.getString(PREF_KEY_TOKEN)
+            if (token.isNotBlank()) {
+                this.user = LoggedInUser(Prefs.getString(PREF_KEY_TOKEN))
+            }
         }
     }
 }

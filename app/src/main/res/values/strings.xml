@@ -21,4 +21,9 @@
     <string name="sign_up_failed_409">Account already existed</string>
 
     <string name="invalid_new_post">Invalid new post info</string>
+
+    <string name="headline">Headline</string>
+    <string name="url">Duck Image URL</string>
+    <string name="up_vote">Up Vote</string>
+    <string name="down_vote">Down Vote</string>
 </resources>
