@@ -54,6 +54,7 @@ dependencies {
     implementation "io.ktor:ktor-client-android:$ktor_version"
     implementation "io.ktor:ktor-client-serialization:$ktor_version"
     implementation "io.ktor:ktor-client-logging:$ktor_version"
+    debugImplementation "ch.qos.logback:logback-classic:1.2.3"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
 
     def nav_version = "2.5.0-alpha01"
@@ -70,7 +71,7 @@ dependencies {
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-//    implementation 'com.orhanobut:logger:2.2.0'
+    implementation 'com.orhanobut:logger:2.2.0'
 
     implementation 'com.pixplicity.easyprefs:EasyPrefs:1.10.0'
 

@@ -1,6 +1,7 @@
 package com.jeffreyliu.duckit.ktor
 
 import com.jeffreyliu.duckit.model.*
+import com.orhanobut.logger.Logger
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -16,18 +17,18 @@ class PostsServiceImpl(
             ResponseWrapper(response = response)
         } catch (e: RedirectResponseException) {
             // 3xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: ClientRequestException) {
             // 4xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: ServerResponseException) {
             // 5xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
@@ -46,18 +47,18 @@ class PostsServiceImpl(
             ResponseWrapper()
         } catch (e: RedirectResponseException) {
             // 3xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: ClientRequestException) {
             // 4xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: ServerResponseException) {
             // 5xx - responses
-            println("Error: ${e.response.status.description}")
+            Logger.e("Error: ${e.response.status.description}")
             ResponseWrapper(e = e)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
@@ -71,7 +72,7 @@ class PostsServiceImpl(
             }
             ResponseWrapper(result)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
@@ -85,7 +86,7 @@ class PostsServiceImpl(
             }
             ResponseWrapper(result)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
@@ -98,7 +99,7 @@ class PostsServiceImpl(
             }
             ResponseWrapper(result)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
@@ -111,7 +112,7 @@ class PostsServiceImpl(
             }
             ResponseWrapper(result)
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            Logger.e("Error: ${e.message}")
             ResponseWrapper(e = e)
         }
     }
